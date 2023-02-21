@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { HabitDay, DAY_SIZE } from "../components/HabitDay";
 import { Header } from "../components/Header";
-import { generateDatesFromYearBeginning } from "../utils/generate-dates-from-year-beginning";
+import { generateRangeDatesFromYearStart } from "../utils/generate-dates-from-year-beginning";
 import { api } from "../lib/axios";
 import { Loading } from "../components/Loading";
 import dayjs from "dayjs";
@@ -16,22 +16,21 @@ type SummaryProps = Array<{
 }>;
 
 const WeekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
-const datesFromYearBeginning = generateDatesFromYearBeginning();
-const minimumSummaryDatesSizes = 18 * 6;
-const amountOfDaysToFill = minimumSummaryDatesSizes - datesFromYearBeginning.length;
-console.log("datesFromYearBeginning: ", datesFromYearBeginning.length);
+const datesFromYearBeginning = generateRangeDatesFromYearStart();
+const minimumSummaryDatesSizes = 18 * 5;
+const amountOfDaysToFill =
+  minimumSummaryDatesSizes - datesFromYearBeginning.length;
+
 export function Home() {
   const { navigate } = useNavigation();
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<SummaryProps | null>(null);
-  console.log("IU");
 
   async function fetchData() {
     try {
       setLoading(true);
       const response = await api.get("/summary");
       setSummary(response.data);
-      console.log(response.data);
     } catch (error) {
       console.log(error);
       Alert.alert("Erro", "Não foi possível carregar os dados");
@@ -41,7 +40,6 @@ export function Home() {
   }
 
   useEffect(() => {
-    console.log("executei useEffect");
     fetchData();
   }, []);
 
